@@ -212,11 +212,13 @@ pub struct PanOrbitCamera {
     /// already smooth. It only applies to line-based scroll events.
     pub zoom_smoothness: f32,
     /// Button used to orbit the camera.
+    /// None means orbiting is disabled.
     /// Defaults to `Button::Left`.
-    pub button_orbit: MouseButton,
+    pub button_orbit: Option<MouseButton>,
     /// Button used to pan the camera.
+    /// None means panning is disabled.
     /// Defaults to `Button::Right`.
-    pub button_pan: MouseButton,
+    pub button_pan: Option<MouseButton>,
     /// Key that must be pressed for `button_orbit` to work.
     /// Defaults to `None` (no modifier).
     pub modifier_orbit: Option<KeyCode>,
@@ -291,8 +293,8 @@ impl Default for PanOrbitCamera {
             pan_smoothness: 0.02,
             zoom_sensitivity: 1.0,
             zoom_smoothness: 0.1,
-            button_orbit: MouseButton::Left,
-            button_pan: MouseButton::Right,
+            button_orbit: Some(MouseButton::Left),
+            button_pan: Some(MouseButton::Right),
             modifier_orbit: None,
             modifier_pan: None,
             touch_enabled: true,

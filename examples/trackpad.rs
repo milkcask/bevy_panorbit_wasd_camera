@@ -55,8 +55,8 @@ fn setup(
             // Allow the camera to go upside down
             allow_upside_down: true,
             // Change the controls (these match Blender)
-            button_orbit: MouseButton::Middle,
-            button_pan: MouseButton::Middle,
+            button_orbit: Some(MouseButton::Middle),
+            button_pan: Some(MouseButton::Middle),
             modifier_pan: Some(KeyCode::ShiftLeft),
             // camera responds to trackpad as in Blender
             // if you don't want to write out both modifiers,
