@@ -15,6 +15,7 @@ use bevy_egui::EguiPreUpdateSet;
 #[cfg(feature = "bevy_egui")]
 pub use crate::egui::{EguiFocusIncludesHover, EguiWantsFocus};
 use crate::input::{mouse_key_tracker, MouseKeyTracker};
+use crate::keyboard::{keyboard_tracker, KeyboardTracker};
 pub use crate::touch::TouchControls;
 use crate::touch::{touch_tracker, TouchGestures, TouchTracker};
 use crate::traits::OptionalClamp;
@@ -22,6 +23,7 @@ use crate::traits::OptionalClamp;
 #[cfg(feature = "bevy_egui")]
 mod egui;
 mod input;
+mod keyboard;
 mod touch;
 mod traits;
 mod util;
@@ -44,6 +46,7 @@ impl Plugin for PanOrbitCameraPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<ActiveCameraData>()
             .init_resource::<MouseKeyTracker>()
+            .init_resource::<KeyboardTracker>()
             .init_resource::<TouchTracker>()
             .add_systems(
                 PostUpdate,
@@ -53,6 +56,7 @@ impl Plugin for PanOrbitCameraPlugin {
                             .run_if(|active_cam: Res<ActiveCameraData>| !active_cam.manual),
                         mouse_key_tracker,
                         touch_tracker,
+                        keyboard_tracker,
                     ),
                     pan_orbit_camera,
                 )
@@ -213,10 +217,10 @@ pub struct PanOrbitCamera {
     pub zoom_smoothness: f32,
     /// Button used to orbit the camera.
     /// Defaults to `Button::Left`.
-    pub button_orbit: MouseButton,
+    pub button_orbit: Option<MouseButton>,
     /// Button used to pan the camera.
     /// Defaults to `Button::Right`.
-    pub button_pan: MouseButton,
+    pub button_pan: Option<MouseButton>,
     /// Key that must be pressed for `button_orbit` to work.
     /// Defaults to `None` (no modifier).
     pub modifier_orbit: Option<KeyCode>,
@@ -275,6 +279,21 @@ pub struct PanOrbitCamera {
     /// time without affecting the camera, for example in a game.
     /// Defaults to `false`.
     pub use_real_time: bool,
+    /// Forward key
+    /// Defaults to `KeyCode::W`
+    pub forward_key: Option<KeyCode>,
+    /// Backward key
+    /// Defaults to `KeyCode::S`
+    pub backward_key: Option<KeyCode>,
+    /// Left key
+    /// Defaults to `KeyCode::A`
+    pub left_key: Option<KeyCode>,
+    /// Right key
+    /// Defaults to `KeyCode::D`
+    pub right_key: Option<KeyCode>,
+    /// Keyboard multiplier for panning speed
+    /// Defaults to `50.0`
+    pub keyboard_pan_multiplier: f32,
 }
 
 impl Default for PanOrbitCamera {
@@ -291,8 +310,8 @@ impl Default for PanOrbitCamera {
             pan_smoothness: 0.02,
             zoom_sensitivity: 1.0,
             zoom_smoothness: 0.1,
-            button_orbit: MouseButton::Left,
-            button_pan: MouseButton::Right,
+            button_orbit: Some(MouseButton::Left),
+            button_pan: Some(MouseButton::Right),
             modifier_orbit: None,
             modifier_pan: None,
             touch_enabled: true,
@@ -319,6 +338,11 @@ impl Default for PanOrbitCamera {
             force_update: false,
             axis: [Vec3::X, Vec3::Y, Vec3::Z],
             use_real_time: false,
+            forward_key: Some(KeyCode::KeyW),
+            backward_key: Some(KeyCode::KeyS),
+            left_key: Some(KeyCode::KeyA),
+            right_key: Some(KeyCode::KeyD),
+            keyboard_pan_multiplier: 50.0,
         }
     }
 }
@@ -488,6 +512,7 @@ fn active_viewport_data(
 fn pan_orbit_camera(
     active_cam: Res<ActiveCameraData>,
     mouse_key_tracker: Res<MouseKeyTracker>,
+    keyboard_tracker: Res<KeyboardTracker>,
     touch_tracker: Res<TouchTracker>,
     mut orbit_cameras: Query<(Entity, &mut PanOrbitCamera, &mut Transform, &mut Projection)>,
     time_real: Res<Time<Real>>,
@@ -575,6 +600,7 @@ fn pan_orbit_camera(
 
         let mut orbit = Vec2::ZERO;
         let mut pan = Vec2::ZERO;
+        let mut horizontal_pan = Vec2::ZERO;
         let mut scroll_line = 0.0;
         let mut scroll_pixel = 0.0;
         let mut orbit_button_changed = false;
@@ -626,6 +652,8 @@ fn pan_orbit_camera(
                 pan += touch_pan * pan_orbit.pan_sensitivity;
                 scroll_pixel += touch_zoom_pixel * zoom_direction * pan_orbit.zoom_sensitivity;
             }
+
+            horizontal_pan = keyboard_tracker.pan
         }
 
         // 2 - Process input into target yaw/pitch, or focus, radius
@@ -696,6 +724,36 @@ fn pan_orbit_camera(
                 .map(|value| apply_zoom_limits(value + pixel_delta));
 
             has_moved = true;
+        }
+        if horizontal_pan.length_squared() > 0.0 {
+            // Make panning distance independent of resolution and FOV,
+            if let Some(vp_size) = active_cam.viewport_size {
+                let mut multiplier = 1.0;
+                match *projection {
+                    Projection::Perspective(ref p) => {
+                        horizontal_pan *= Vec2::new(p.fov * p.aspect_ratio, p.fov) / vp_size;
+                        // Make panning proportional to distance away from focus point
+                        if let Some(radius) = pan_orbit.radius {
+                            multiplier = radius;
+                        }
+                    }
+                    Projection::Orthographic(ref p) => {
+                        horizontal_pan *= Vec2::new(p.area.width(), p.area.height()) / vp_size;
+                    }
+                    Projection::Custom(_) => todo!(),
+                }
+                // Translate by local axes, ignoring pitch rotation
+                let yaw_only_rotation = if let Some(yaw) = pan_orbit.yaw {
+                    Quat::from_axis_angle(pan_orbit.axis[1], yaw)
+                } else {
+                    Quat::IDENTITY
+                };
+                let right = yaw_only_rotation * pan_orbit.axis[0] * -horizontal_pan.x;
+                let up = yaw_only_rotation * pan_orbit.axis[2] * horizontal_pan.y;
+                let translation = (right + up) * multiplier * pan_orbit.keyboard_pan_multiplier;
+                pan_orbit.target_focus += translation;
+                has_moved = true;
+            }
         }
 
         // 3 - Apply constraints

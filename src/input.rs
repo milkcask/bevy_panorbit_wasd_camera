@@ -193,7 +193,8 @@ pub fn orbit_pressed(
     let is_pressed = pan_orbit
         .modifier_orbit
         .is_none_or(|modifier| key_input.pressed(modifier))
-        && mouse_input.pressed(pan_orbit.button_orbit);
+        && pan_orbit.button_orbit.is_some()
+        && mouse_input.pressed(pan_orbit.button_orbit.unwrap());
 
     is_pressed
         && pan_orbit
@@ -209,7 +210,8 @@ pub fn orbit_just_pressed(
     let just_pressed = pan_orbit
         .modifier_orbit
         .is_none_or(|modifier| key_input.pressed(modifier))
-        && (mouse_input.just_pressed(pan_orbit.button_orbit));
+        && pan_orbit.button_orbit.is_some()
+        && (mouse_input.just_pressed(pan_orbit.button_orbit.unwrap()));
 
     just_pressed
         && pan_orbit
@@ -225,7 +227,8 @@ pub fn orbit_just_released(
     let just_released = pan_orbit
         .modifier_orbit
         .is_none_or(|modifier| key_input.pressed(modifier))
-        && (mouse_input.just_released(pan_orbit.button_orbit));
+        && pan_orbit.button_orbit.is_some()
+        && (mouse_input.just_released(pan_orbit.button_orbit.unwrap()));
 
     just_released
         && pan_orbit
@@ -241,7 +244,8 @@ pub fn pan_pressed(
     let is_pressed = pan_orbit
         .modifier_pan
         .is_none_or(|modifier| key_input.pressed(modifier))
-        && mouse_input.pressed(pan_orbit.button_pan);
+        && pan_orbit.button_pan.is_some()
+        && mouse_input.pressed(pan_orbit.button_pan.unwrap());
 
     is_pressed
         && pan_orbit
@@ -257,7 +261,8 @@ pub fn pan_just_pressed(
     let just_pressed = pan_orbit
         .modifier_pan
         .is_none_or(|modifier| key_input.pressed(modifier))
-        && (mouse_input.just_pressed(pan_orbit.button_pan));
+        && pan_orbit.button_pan.is_some()
+        && (mouse_input.just_pressed(pan_orbit.button_pan.unwrap()));
 
     just_pressed
         && pan_orbit

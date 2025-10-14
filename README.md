@@ -1,3 +1,13 @@
+# Patch notes
+
+- Added: config to disable mouse orbit & mouse pan
+- Added: support for WASD keyboard movement
+- Updated: examples
+
+---
+
+# Original document
+
 [![Crates.io](https://img.shields.io/crates/v/bevy_panorbit_camera)](https://crates.io/crates/bevy_panorbit_camera)
 [![docs.rs](https://docs.rs/bevy_panorbit_camera/badge.svg)](https://docs.rs/bevy_panorbit_camera)
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
@@ -10,8 +20,9 @@
 
 ## Summary
 
-Bevy Pan/Orbit Camera provides orbit camera controls for Bevy Engine, designed with simplicity and flexibility in mind.
-Use it to quickly prototype, experiment, for model viewers, and more!
+Bevy Pan/Orbit Camera provides orbit camera controls for Bevy Engine, designed
+with simplicity and flexibility in mind. Use it to quickly prototype,
+experiment, for model viewers, and more!
 
 ## Features:
 
@@ -45,7 +56,8 @@ Add the plugin:
 .add_plugins(PanOrbitCameraPlugin)
 ```
 
-Add `PanOrbitCamera` (this will automatically add a `Camera3d` but you can add it manually if necessary):
+Add `PanOrbitCamera` (this will automatically add a `Camera3d` but you can add
+it manually if necessary):
 
 ```rust ignore
 commands.spawn((
@@ -56,18 +68,19 @@ commands.spawn((
 
 This will set up a camera with good defaults.
 
-Check out the [advanced example](https://github.com/Plonq/bevy_panorbit_camera/tree/master/examples/advanced.rs) to see
-all the possible configuration options.
+Check out the
+[advanced example](https://github.com/Plonq/bevy_panorbit_camera/tree/master/examples/advanced.rs)
+to see all the possible configuration options.
 
 ## Cargo Features
 
-- `bevy_egui` (optional): Makes `PanOrbitCamera` ignore any input that `egui` uses, thus preventing moving the camera
-  when interacting with egui windows
+- `bevy_egui` (optional): Makes `PanOrbitCamera` ignore any input that `egui`
+  uses, thus preventing moving the camera when interacting with egui windows
 
 ## Version Compatibility
 
 | bevy | bevy_panorbit_camera |
-|------|----------------------|
+| ---- | -------------------- |
 | 0.17 | 0.29-0.30            |
 | 0.16 | 0.26-0.28            |
 | 0.15 | 0.21-0.25            |
@@ -79,19 +92,23 @@ all the possible configuration options.
 
 ## Credits
 
-- [Bevy Cheat Book](https://bevy-cheatbook.github.io): For providing an example that I started from
-- [babylon.js](https://www.babylonjs.com): I referenced their arc rotate camera for some of this
-- [bevy_pancam](https://github.com/johanhelsing/bevy_pancam): For the egui feature idea
+- [Bevy Cheat Book](https://bevy-cheatbook.github.io): For providing an example
+  that I started from
+- [babylon.js](https://www.babylonjs.com): I referenced their arc rotate camera
+  for some of this
+- [bevy_pancam](https://github.com/johanhelsing/bevy_pancam): For the egui
+  feature idea
 
 ## License
 
 All code in this repository is dual-licensed under either:
 
-* MIT License ([LICENSE-MIT](LICENSE-MIT) or [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT))
-* Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE)
-  or [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0))
+- MIT License ([LICENSE-MIT](LICENSE-MIT) or
+  [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT))
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
+  [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0))
 
-at your option.
-This means you can select the license you prefer!
-This dual-licensing approach is the de-facto standard in the Rust ecosystem and there
-are [very good reasons](https://github.com/bevyengine/bevy/issues/2373) to include both.
+at your option. This means you can select the license you prefer! This
+dual-licensing approach is the de-facto standard in the Rust ecosystem and there
+are [very good reasons](https://github.com/bevyengine/bevy/issues/2373) to
+include both.
