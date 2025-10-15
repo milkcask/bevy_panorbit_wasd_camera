@@ -6,7 +6,7 @@
 //!   Zoom: Mousewheel, ControlLeft + trackpad scroll
 
 use bevy::prelude::*;
-use bevy_panorbit_camera::{PanOrbitCamera, PanOrbitCameraPlugin, TrackpadBehavior};
+use bevy_panorbit_wasd_camera::{PanOrbitCamera, PanOrbitCameraPlugin, TrackpadBehavior};
 use std::f32::consts::TAU;
 
 fn main() {

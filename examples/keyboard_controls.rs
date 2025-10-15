@@ -7,7 +7,7 @@
 //!     Zoom in/out: Z/X
 
 use bevy::prelude::*;
-use bevy_panorbit_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
+use bevy_panorbit_wasd_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
 
 fn main() {
     App::new()

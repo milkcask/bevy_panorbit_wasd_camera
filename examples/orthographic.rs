@@ -2,7 +2,7 @@
 
 use bevy::camera::ScalingMode;
 use bevy::prelude::*;
-use bevy_panorbit_camera::{PanOrbitCamera, PanOrbitCameraPlugin, PanOrbitCameraSystemSet};
+use bevy_panorbit_wasd_camera::{PanOrbitCamera, PanOrbitCameraPlugin, PanOrbitCameraSystemSet};
 
 fn main() {
     App::new()

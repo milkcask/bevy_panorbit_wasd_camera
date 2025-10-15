@@ -1,7 +1,7 @@
 //! Demonstrates how to keep the camera's focus inside a shape.
 
 use bevy::{color::palettes::css::WHITE, prelude::*};
-use bevy_panorbit_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
+use bevy_panorbit_wasd_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
 
 fn main() {
     App::new()

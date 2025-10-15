@@ -7,7 +7,7 @@
 //!   Zoom: Mousewheel
 
 use bevy::prelude::*;
-use bevy_panorbit_camera::{PanOrbitCamera, PanOrbitCameraPlugin, TouchControls};
+use bevy_panorbit_wasd_camera::{PanOrbitCamera, PanOrbitCameraPlugin, TouchControls};
 use std::f32::consts::TAU;
 
 fn main() {

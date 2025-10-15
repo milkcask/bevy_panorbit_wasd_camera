@@ -17,7 +17,7 @@ use bevy::{
         Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
     },
 };
-use bevy_panorbit_camera::{ActiveCameraData, PanOrbitCamera, PanOrbitCameraPlugin};
+use bevy_panorbit_wasd_camera::{ActiveCameraData, PanOrbitCamera, PanOrbitCameraPlugin};
 
 fn main() {
     App::new()

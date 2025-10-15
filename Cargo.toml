@@ -1,14 +1,14 @@
 [package]
-name = "bevy_panorbit_camera"
-version = "0.30.0-autumn"
-authors = ["Plonq"]
+name = "bevy_panorbit_wasd_camera"
+version = "0.30.1"
+authors = ["Plonq", "milkcask"]
 edition = "2021"
-description = "A basic pan and orbit camera in Bevy"
-keywords = ["gamedev", "bevy", "orbit", "camera"]
+description = "A basic pan and orbit camera in Bevy with WASD support"
+keywords = ["gamedev", "bevy", "orbit", "camera", "wasd"]
 categories = ["game-development"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/Plonq/bevy_panorbit_camera"
-homepage = "https://github.com/Plonq/bevy_panorbit_camera"
+repository = "https://github.com/milkcask/bevy_panorbit_wasd_camera"
+homepage = "https://github.com/milkcask/bevy_panorbit_wasd_camera"
 readme = "README.md"
 
 [features]

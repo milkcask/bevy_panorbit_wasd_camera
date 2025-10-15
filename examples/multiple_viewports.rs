@@ -2,7 +2,7 @@
 
 use bevy::window::WindowResized;
 use bevy::{camera::Viewport, prelude::*};
-use bevy_panorbit_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
+use bevy_panorbit_wasd_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
 
 fn main() {
     App::new()

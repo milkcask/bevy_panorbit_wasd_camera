@@ -1,7 +1,7 @@
 //! Demonstrates how you can animate the movement of the camera
 
 use bevy::prelude::*;
-use bevy_panorbit_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
+use bevy_panorbit_wasd_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
 use std::f32::consts::TAU;
 
 fn main() {

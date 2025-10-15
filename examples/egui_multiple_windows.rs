@@ -9,7 +9,7 @@ use bevy_egui::{
     egui, EguiContext, EguiMultipassSchedule, EguiPlugin, EguiPrimaryContextPass,
     PrimaryEguiContext,
 };
-use bevy_panorbit_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
+use bevy_panorbit_wasd_camera::{PanOrbitCamera, PanOrbitCameraPlugin};
 
 #[derive(ScheduleLabel, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct SecondWindowContextPass;

@@ -1,12 +1,25 @@
-# Patch notes
+# bevy_panorbit_wasd_camera
 
-- Added: config to disable mouse orbit & mouse pan
-- Added: support for WASD keyboard movement
-- Updated: examples
+This crate is based on bevy_panorbit_camera, with added WASD panning support.
+
+[![Crates.io](https://img.shields.io/crates/v/bevy_panorbit_wasd_camera)](https://crates.io/crates/bevy_panorbit_wasd_camera)
+[![docs.rs](https://docs.rs/bevy_panorbit_wasd_camera/badge.svg)](https://docs.rs/bevy_panorbit_wasd_camera)
+[![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-released%20version-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
+
+| bevy | bevy_panorbit_camera | bevy_panorbit_wasd_camera |
+| ---- | -------------------- | ------------------------- |
+| 0.17 | 0.29-0.30            | 0.30                      |
+| 0.16 | 0.26-0.28            |                           |
+| 0.15 | 0.21-0.25            |                           |
+| 0.14 | 0.19-0.20            |                           |
+| 0.13 | 0.14-0.18            |                           |
+| 0.12 | 0.9-0.13             |                           |
+| 0.11 | 0.6-0.8              |                           |
+| 0.10 | 0.1-0.5              |                           |
 
 ---
 
-# Original document
+# Original document from bevy_panorbit_camera
 
 [![Crates.io](https://img.shields.io/crates/v/bevy_panorbit_camera)](https://crates.io/crates/bevy_panorbit_camera)
 [![docs.rs](https://docs.rs/bevy_panorbit_camera/badge.svg)](https://docs.rs/bevy_panorbit_camera)

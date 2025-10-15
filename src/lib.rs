@@ -32,7 +32,7 @@ mod util;
 /// # Example
 /// ```no_run
 /// # use bevy::prelude::*;
-/// # use bevy_panorbit_camera::{PanOrbitCameraPlugin, PanOrbitCamera};
+/// # use bevy_panorbit_wasd_camera::{PanOrbitCameraPlugin, PanOrbitCamera};
 /// fn main() {
 ///     App::new()
 ///         .add_plugins(DefaultPlugins)
@@ -89,7 +89,7 @@ pub struct PanOrbitCameraSystemSet;
 /// # Example
 /// ```no_run
 /// # use bevy::prelude::*;
-/// # use bevy_panorbit_camera::{PanOrbitCameraPlugin, PanOrbitCamera};
+/// # use bevy_panorbit_wasd_camera::{PanOrbitCameraPlugin, PanOrbitCamera};
 /// # fn main() {
 /// #     App::new()
 /// #         .add_plugins(DefaultPlugins)
