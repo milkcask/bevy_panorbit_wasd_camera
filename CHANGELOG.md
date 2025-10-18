@@ -1,3 +1,7 @@
+## 0.31.0
+
+- Update `bevy_egui` to 0.38 (#126)
+
 ## 0.30.1
 
 - Adde config to disable mouse orbit & mouse pan
