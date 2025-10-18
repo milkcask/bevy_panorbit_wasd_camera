@@ -8,7 +8,7 @@ This crate is based on bevy_panorbit_camera, with added WASD panning support.
 
 | bevy | bevy_panorbit_camera | bevy_panorbit_wasd_camera |
 | ---- | -------------------- | ------------------------- |
-| 0.17 | 0.29-0.30            | 0.30                      |
+| 0.17 | 0.29-0.31            | 0.30-0.31                 |
 | 0.16 | 0.26-0.28            |                           |
 | 0.15 | 0.21-0.25            |                           |
 | 0.14 | 0.19-0.20            |                           |
@@ -93,8 +93,8 @@ to see all the possible configuration options.
 ## Version Compatibility
 
 | bevy | bevy_panorbit_camera |
-| ---- | -------------------- |
-| 0.17 | 0.29-0.30            |
+|------|----------------------|
+| 0.17 | 0.29-0.31            |
 | 0.16 | 0.26-0.28            |
 | 0.15 | 0.21-0.25            |
 | 0.14 | 0.19-0.20            |
