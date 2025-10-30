@@ -303,6 +303,15 @@ pub struct PanOrbitCamera {
     /// Keyboard multiplier for rotation speed
     /// Defaults to `3.0`
     pub keyboard_yaw_multiplier: f32,
+    /// Increase pitch key
+    /// Defaults to `KeyCode::R`
+    pub increase_pitch_key: Option<KeyCode>,
+    /// Reduce pitch key
+    /// Defaults to `KeyCode::F`
+    pub reduce_pitch_key: Option<KeyCode>,
+    /// Keyboard multiplier for pitch speed
+    /// Defaults to `2.0`
+    pub keyboard_pitch_multiplier: f32,
 }
 
 impl Default for PanOrbitCamera {
@@ -355,6 +364,9 @@ impl Default for PanOrbitCamera {
             counter_clockwise_key: Some(KeyCode::KeyQ),
             clockwise_key: Some(KeyCode::KeyE),
             keyboard_yaw_multiplier: 3.0,
+            increase_pitch_key: Some(KeyCode::KeyR),
+            reduce_pitch_key: Some(KeyCode::KeyF),
+            keyboard_pitch_multiplier: 2.0,
         }
     }
 }
@@ -614,6 +626,7 @@ fn pan_orbit_camera(
         let mut pan = Vec2::ZERO;
         let mut keyboard_pan = Vec2::ZERO;
         let mut keyboard_yaw = 0_f32;
+        let mut keyboard_pitch = 0_f32;
 
         let mut scroll_line = 0.0;
         let mut scroll_pixel = 0.0;
@@ -669,6 +682,7 @@ fn pan_orbit_camera(
 
             keyboard_pan = keyboard_tracker.pan;
             keyboard_yaw = keyboard_tracker.yaw;
+            keyboard_pitch = keyboard_tracker.pitch;
         }
 
         // 2 - Process input into target yaw/pitch, or focus, radius
@@ -772,6 +786,11 @@ fn pan_orbit_camera(
         }
         if keyboard_yaw.abs() > 0.0 {
             pan_orbit.target_yaw += keyboard_yaw * pan_orbit.keyboard_yaw_multiplier;
+            has_moved = true;
+        }
+
+        if keyboard_pitch.abs() > 0.0 {
+            pan_orbit.target_pitch += keyboard_pitch * pan_orbit.keyboard_pitch_multiplier;
             has_moved = true;
         }
 

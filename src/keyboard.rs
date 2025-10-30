@@ -6,6 +6,7 @@ use crate::{ActiveCameraData, PanOrbitCamera};
 pub struct KeyboardTracker {
     pub pan: Vec2,
     pub yaw: f32,
+    pub pitch: f32,
 }
 
 pub fn keyboard_tracker(
@@ -24,6 +25,7 @@ pub fn keyboard_tracker(
         Err(_) => return,
     };
 
+    // Pan
     let mut pan = Vec2::ZERO;
 
     if let Some(key) = pan_orbit.forward_key {
@@ -53,6 +55,7 @@ pub fn keyboard_tracker(
     }
     camera_movement.pan = pan;
 
+    // Yaw
     let mut yaw = 0.0;
     
     if let Some(key) = pan_orbit.counter_clockwise_key {
@@ -67,4 +70,20 @@ pub fn keyboard_tracker(
         }
     }
     camera_movement.yaw = yaw;
+
+    //Pitch
+    let mut pitch = 0.0;
+
+    if let Some(key) = pan_orbit.increase_pitch_key {
+        if key_input.pressed(key) {
+            pitch += 1.0_f32.to_radians();
+        }
+    }
+
+    if let Some(key) = pan_orbit.reduce_pitch_key {
+        if key_input.pressed(key) {
+            pitch -= 1.0_f32.to_radians();
+        }
+    }
+    camera_movement.pitch = pitch;
 }
