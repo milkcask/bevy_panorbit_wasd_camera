@@ -294,6 +294,15 @@ pub struct PanOrbitCamera {
     /// Keyboard multiplier for panning speed
     /// Defaults to `50.0`
     pub keyboard_pan_multiplier: f32,
+    /// Counter-clockwise key
+    /// Defaults to `KeyCode::Q`
+    pub counter_clockwise_key: Option<KeyCode>,
+    /// Clockwise key
+    /// Defaults to `KeyCode::E`
+    pub clockwise_key: Option<KeyCode>,
+    /// Keyboard multiplier for rotation speed
+    /// Defaults to `3.0`
+    pub keyboard_yaw_multiplier: f32,
 }
 
 impl Default for PanOrbitCamera {
@@ -343,6 +352,9 @@ impl Default for PanOrbitCamera {
             left_key: Some(KeyCode::KeyA),
             right_key: Some(KeyCode::KeyD),
             keyboard_pan_multiplier: 50.0,
+            counter_clockwise_key: Some(KeyCode::KeyQ),
+            clockwise_key: Some(KeyCode::KeyE),
+            keyboard_yaw_multiplier: 3.0,
         }
     }
 }
@@ -600,7 +612,9 @@ fn pan_orbit_camera(
 
         let mut orbit = Vec2::ZERO;
         let mut pan = Vec2::ZERO;
-        let mut horizontal_pan = Vec2::ZERO;
+        let mut keyboard_pan = Vec2::ZERO;
+        let mut keyboard_yaw = 0_f32;
+
         let mut scroll_line = 0.0;
         let mut scroll_pixel = 0.0;
         let mut orbit_button_changed = false;
@@ -653,7 +667,8 @@ fn pan_orbit_camera(
                 scroll_pixel += touch_zoom_pixel * zoom_direction * pan_orbit.zoom_sensitivity;
             }
 
-            horizontal_pan = keyboard_tracker.pan
+            keyboard_pan = keyboard_tracker.pan;
+            keyboard_yaw = keyboard_tracker.yaw;
         }
 
         // 2 - Process input into target yaw/pitch, or focus, radius
@@ -725,20 +740,20 @@ fn pan_orbit_camera(
 
             has_moved = true;
         }
-        if horizontal_pan.length_squared() > 0.0 {
+        if keyboard_pan.length_squared() > 0.0 {
             // Make panning distance independent of resolution and FOV,
             if let Some(vp_size) = active_cam.viewport_size {
                 let mut multiplier = 1.0;
                 match *projection {
                     Projection::Perspective(ref p) => {
-                        horizontal_pan *= Vec2::new(p.fov * p.aspect_ratio, p.fov) / vp_size;
+                        keyboard_pan *= Vec2::new(p.fov * p.aspect_ratio, p.fov) / vp_size;
                         // Make panning proportional to distance away from focus point
                         if let Some(radius) = pan_orbit.radius {
                             multiplier = radius;
                         }
                     }
                     Projection::Orthographic(ref p) => {
-                        horizontal_pan *= Vec2::new(p.area.width(), p.area.height()) / vp_size;
+                        keyboard_pan *= Vec2::new(p.area.width(), p.area.height()) / vp_size;
                     }
                     Projection::Custom(_) => todo!(),
                 }
@@ -748,12 +763,16 @@ fn pan_orbit_camera(
                 } else {
                     Quat::IDENTITY
                 };
-                let right = yaw_only_rotation * pan_orbit.axis[0] * -horizontal_pan.x;
-                let up = yaw_only_rotation * pan_orbit.axis[2] * horizontal_pan.y;
+                let right = yaw_only_rotation * pan_orbit.axis[0] * -keyboard_pan.x;
+                let up = yaw_only_rotation * pan_orbit.axis[2] * keyboard_pan.y;
                 let translation = (right + up) * multiplier * pan_orbit.keyboard_pan_multiplier;
                 pan_orbit.target_focus += translation;
                 has_moved = true;
             }
+        }
+        if keyboard_yaw.abs() > 0.0 {
+            pan_orbit.target_yaw += keyboard_yaw * pan_orbit.keyboard_yaw_multiplier;
+            has_moved = true;
         }
 
         // 3 - Apply constraints
