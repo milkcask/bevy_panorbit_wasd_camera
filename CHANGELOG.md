@@ -1,11 +1,17 @@
+## 0.31.1
+
+- Add support for Q/E keyboard yaw interaction
+- Add support for R/F keyboard pitch interaction
+
+
 ## 0.31.0
 
 - Update `bevy_egui` to 0.38 (#126)
 
 ## 0.30.1
 
-- Adde config to disable mouse orbit & mouse pan
-- Adde support for WASD keyboard movement
+- Add config to disable mouse orbit & mouse pan
+- Add support for WASD keyboard movement
 - Update examples
 
 ## 0.30.0
