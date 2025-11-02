@@ -1,8 +1,11 @@
+## 0.32.0
+
+- Zoom with mouse button + motion (#129)
+
 ## 0.31.1
 
 - Add support for Q/E keyboard yaw interaction
 - Add support for R/F keyboard pitch interaction
-
 
 ## 0.31.0
 
