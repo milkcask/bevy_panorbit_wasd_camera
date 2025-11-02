@@ -14,7 +14,7 @@ use bevy_egui::EguiPreUpdateSet;
 
 #[cfg(feature = "bevy_egui")]
 pub use crate::egui::{EguiFocusIncludesHover, EguiWantsFocus};
-use crate::input::{mouse_key_tracker, MouseKeyTracker};
+use crate::input::{button_zoom_just_pressed, mouse_key_tracker, MouseKeyTracker};
 use crate::keyboard::{keyboard_tracker, KeyboardTracker};
 pub use crate::touch::TouchControls;
 use crate::touch::{touch_tracker, TouchGestures, TouchTracker};
@@ -221,6 +221,12 @@ pub struct PanOrbitCamera {
     /// Button used to pan the camera.
     /// Defaults to `Button::Right`.
     pub button_pan: Option<MouseButton>,
+    /// Button used to zoom the camera, by holding it down and moving the mouse forward and back.
+    /// Defaults to `None`.
+    pub button_zoom: Option<MouseButton>,
+    /// Which axis should zoom the camera when using `button_zoom`.
+    /// Defaults to `ButtonZoomAxis::Y`.
+    pub button_zoom_axis: ButtonZoomAxis,
     /// Key that must be pressed for `button_orbit` to work.
     /// Defaults to `None` (no modifier).
     pub modifier_orbit: Option<KeyCode>,
@@ -330,6 +336,8 @@ impl Default for PanOrbitCamera {
             zoom_smoothness: 0.1,
             button_orbit: Some(MouseButton::Left),
             button_pan: Some(MouseButton::Right),
+            button_zoom: None,
+            button_zoom_axis: ButtonZoomAxis::Y,
             modifier_orbit: None,
             modifier_pan: None,
             touch_enabled: true,
@@ -405,6 +413,17 @@ pub enum FocusBoundsShape {
     Cuboid(Cuboid),
 }
 
+/// The shape to restrict the camera's focus inside.
+#[derive(Clone, PartialEq, Debug, Reflect, Copy)]
+pub enum ButtonZoomAxis {
+    /// Zoom by moving the mouse along the x-axis.
+    X,
+    /// Zoom by moving the mouse along the y-axis.
+    Y,
+    /// Zoom by moving the mouse along either the x-axis or the y-axis.
+    XY,
+}
+
 impl From<Sphere> for FocusBoundsShape {
     fn from(value: Sphere) -> Self {
         Self::Sphere(value)
@@ -468,6 +487,7 @@ fn active_viewport_data(
             || input::pan_just_pressed(pan_orbit, &mouse_input, &key_input)
             || !pinch_events.is_empty()
             || !scroll_events.is_empty()
+            || button_zoom_just_pressed(pan_orbit, &mouse_input)
             || (touches.iter_just_pressed().count() > 0
                 && touches.iter_just_pressed().count() == touches.iter().count());
 
