@@ -1,3 +1,8 @@
+## 0.33.0
+
+- Add `reversed_button_zoom` option (#130)
+- Add `#[reflect(Component)]` on `PanOrbitCamera`
+
 ## 0.32.0
 
 - Zoom with mouse button + motion (#129)
