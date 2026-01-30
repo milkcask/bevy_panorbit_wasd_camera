@@ -1,8 +1,20 @@
+## 0.34.0
+
+- Update to Bevy 0.18
+
+## 0.33.0
+
+- Add `reversed_button_zoom` option (#130)
+- Add `#[reflect(Component)]` on `PanOrbitCamera`
+
+## 0.32.0
+
+- Zoom with mouse button + motion (#129)
+
 ## 0.31.1
 
 - Add support for Q/E keyboard yaw interaction
 - Add support for R/F keyboard pitch interaction
-
 
 ## 0.31.0
 

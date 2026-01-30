@@ -14,7 +14,7 @@ use bevy_egui::EguiPreUpdateSet;
 
 #[cfg(feature = "bevy_egui")]
 pub use crate::egui::{EguiFocusIncludesHover, EguiWantsFocus};
-use crate::input::{mouse_key_tracker, MouseKeyTracker};
+use crate::input::{button_zoom_just_pressed, mouse_key_tracker, MouseKeyTracker};
 use crate::keyboard::{keyboard_tracker, KeyboardTracker};
 pub use crate::touch::TouchControls;
 use crate::touch::{touch_tracker, TouchGestures, TouchTracker};
@@ -106,6 +106,7 @@ pub struct PanOrbitCameraSystemSet;
 ///  }
 /// ```
 #[derive(Component, Reflect, Copy, Clone, Debug, PartialEq)]
+#[reflect(Component)]
 #[require(Camera3d)]
 pub struct PanOrbitCamera {
     /// The point to orbit around, and what the camera looks at. Updated automatically.
@@ -221,6 +222,12 @@ pub struct PanOrbitCamera {
     /// Button used to pan the camera.
     /// Defaults to `Button::Right`.
     pub button_pan: Option<MouseButton>,
+    /// Button used to zoom the camera, by holding it down and moving the mouse forward and back.
+    /// Defaults to `None`.
+    pub button_zoom: Option<MouseButton>,
+    /// Which axis should zoom the camera when using `button_zoom`.
+    /// Defaults to `ButtonZoomAxis::Y`.
+    pub button_zoom_axis: ButtonZoomAxis,
     /// Key that must be pressed for `button_orbit` to work.
     /// Defaults to `None` (no modifier).
     pub modifier_orbit: Option<KeyCode>,
@@ -247,9 +254,13 @@ pub struct PanOrbitCamera {
     /// operations when using a trackpad with the `BlenderLike` behavior mode.
     /// Defaults to `1.0`.
     pub trackpad_sensitivity: f32,
-    /// Whether to reverse the zoom direction.
+    /// Whether to reverse the zoom direction. This applies to the button-based zoom `button_zoom`
+    /// as well. If you want button zoom to remain the same, set `button_zoom_reverse` to `true`.
     /// Defaults to `false`.
     pub reversed_zoom: bool,
+    /// Whether the zoom direction when using `button_zoom` is reversed.
+    /// Defaults to `false`.
+    pub reversed_button_zoom: bool,
     /// Whether the camera is currently upside down. Updated automatically.
     /// This is used to determine which way to orbit, because it's more intuitive to reverse the
     /// orbit direction when upside down.
@@ -330,6 +341,9 @@ impl Default for PanOrbitCamera {
             zoom_smoothness: 0.1,
             button_orbit: Some(MouseButton::Left),
             button_pan: Some(MouseButton::Right),
+            button_zoom: None,
+            button_zoom_axis: ButtonZoomAxis::Y,
+            reversed_button_zoom: false,
             modifier_orbit: None,
             modifier_pan: None,
             touch_enabled: true,
@@ -405,6 +419,17 @@ pub enum FocusBoundsShape {
     Cuboid(Cuboid),
 }
 
+/// The shape to restrict the camera's focus inside.
+#[derive(Clone, PartialEq, Debug, Reflect, Copy)]
+pub enum ButtonZoomAxis {
+    /// Zoom by moving the mouse along the x-axis.
+    X,
+    /// Zoom by moving the mouse along the y-axis.
+    Y,
+    /// Zoom by moving the mouse along either the x-axis or the y-axis.
+    XY,
+}
+
 impl From<Sphere> for FocusBoundsShape {
     fn from(value: Sphere) -> Self {
         Self::Sphere(value)
@@ -456,18 +481,19 @@ fn active_viewport_data(
     touches: Res<Touches>,
     primary_windows: Query<&Window, With<PrimaryWindow>>,
     other_windows: Query<&Window, Without<PrimaryWindow>>,
-    orbit_cameras: Query<(Entity, &Camera, &PanOrbitCamera)>,
+    orbit_cameras: Query<(Entity, &Camera, &RenderTarget, &PanOrbitCamera)>,
     #[cfg(feature = "bevy_egui")] egui_wants_focus: Res<EguiWantsFocus>,
 ) {
     let mut new_resource = ActiveCameraData::default();
     let mut max_cam_order = 0;
 
     let mut has_input = false;
-    for (entity, camera, pan_orbit) in orbit_cameras.iter() {
+    for (entity, camera, target, pan_orbit) in orbit_cameras.iter() {
         let input_just_activated = input::orbit_just_pressed(pan_orbit, &mouse_input, &key_input)
             || input::pan_just_pressed(pan_orbit, &mouse_input, &key_input)
             || !pinch_events.is_empty()
             || !scroll_events.is_empty()
+            || button_zoom_just_pressed(pan_orbit, &mouse_input)
             || (touches.iter_just_pressed().count() > 0
                 && touches.iter_just_pressed().count() == touches.iter().count());
 
@@ -481,10 +507,10 @@ fn active_viewport_data(
             }
             if should_get_input {
                 // First check if cursor is in the same window as this camera
-                if let RenderTarget::Window(win_ref) = camera.target {
+                if let RenderTarget::Window(win_ref) = target {
                     let Some(window) = (match win_ref {
                         WindowRef::Primary => primary_windows.single().ok(),
-                        WindowRef::Entity(entity) => other_windows.get(entity).ok(),
+                        WindowRef::Entity(entity) => other_windows.get(*entity).ok(),
                     }) else {
                         // Window does not exist - maybe it was closed and the camera not cleaned up
                         continue;
