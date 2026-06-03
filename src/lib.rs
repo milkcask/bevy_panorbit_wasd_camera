@@ -713,6 +713,13 @@ fn pan_orbit_camera(
 
         // 2 - Process input into target yaw/pitch, or focus, radius
 
+        let delta = if pan_orbit.use_real_time {
+            time_real.delta_secs()
+        } else {
+            time_virt.delta_secs()
+        };
+        let delta_norm = 144.0 * delta;
+
         // Only check for upside down when orbiting started or ended this frame,
         // so we don't reverse the yaw direction while the user is still dragging
         if orbit_button_changed {
@@ -805,18 +812,18 @@ fn pan_orbit_camera(
                 };
                 let right = yaw_only_rotation * pan_orbit.axis[0] * -keyboard_pan.x;
                 let up = yaw_only_rotation * pan_orbit.axis[2] * keyboard_pan.y;
-                let translation = (right + up) * multiplier * pan_orbit.keyboard_pan_multiplier;
+                let translation = (right + up) * multiplier * pan_orbit.keyboard_pan_multiplier * delta_norm;
                 pan_orbit.target_focus += translation;
                 has_moved = true;
             }
         }
         if keyboard_yaw.abs() > 0.0 {
-            pan_orbit.target_yaw += keyboard_yaw * pan_orbit.keyboard_yaw_multiplier;
+            pan_orbit.target_yaw += keyboard_yaw * pan_orbit.keyboard_yaw_multiplier * delta_norm;
             has_moved = true;
         }
 
         if keyboard_pitch.abs() > 0.0 {
-            pan_orbit.target_pitch += keyboard_pitch * pan_orbit.keyboard_pitch_multiplier;
+            pan_orbit.target_pitch += keyboard_pitch * pan_orbit.keyboard_pitch_multiplier * delta_norm;
             has_moved = true;
         }
 
@@ -832,12 +839,6 @@ fn pan_orbit_camera(
         }
 
         // 4 - Update the camera's transform based on current values
-
-        let delta = if pan_orbit.use_real_time {
-            time_real.delta_secs()
-        } else {
-            time_virt.delta_secs()
-        };
 
         if let (Some(yaw), Some(pitch), Some(radius)) =
             (pan_orbit.yaw, pan_orbit.pitch, pan_orbit.radius)
