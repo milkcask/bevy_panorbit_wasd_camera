@@ -718,7 +718,7 @@ fn pan_orbit_camera(
         } else {
             time_virt.delta_secs()
         };
-        let delta_norm = 144.0 * delta;
+        let delta_norm = 60.0 * delta;
 
         // Only check for upside down when orbiting started or ended this frame,
         // so we don't reverse the yaw direction while the user is still dragging
@@ -812,7 +812,8 @@ fn pan_orbit_camera(
                 };
                 let right = yaw_only_rotation * pan_orbit.axis[0] * -keyboard_pan.x;
                 let up = yaw_only_rotation * pan_orbit.axis[2] * keyboard_pan.y;
-                let translation = (right + up) * multiplier * pan_orbit.keyboard_pan_multiplier * delta_norm;
+                let translation =
+                    (right + up) * multiplier * pan_orbit.keyboard_pan_multiplier * delta_norm;
                 pan_orbit.target_focus += translation;
                 has_moved = true;
             }
@@ -823,7 +824,8 @@ fn pan_orbit_camera(
         }
 
         if keyboard_pitch.abs() > 0.0 {
-            pan_orbit.target_pitch += keyboard_pitch * pan_orbit.keyboard_pitch_multiplier * delta_norm;
+            pan_orbit.target_pitch +=
+                keyboard_pitch * pan_orbit.keyboard_pitch_multiplier * delta_norm;
             has_moved = true;
         }
 
