@@ -1,3 +1,8 @@
+## Unreleased
+
+- Update to Bevy 0.19
+- Fix `focus_bounds` example.
+
 ## 0.34.0
 
 - Update to Bevy 0.18
