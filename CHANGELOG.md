@@ -9,6 +9,10 @@
 - Update to Bevy 0.19
 - Fix `focus_bounds` example.
 
+## 0.34.1
+
+- Backport the 0.35.1 keyboard frame rate patches to Bevy 0.18
+
 ## 0.34.0
 
 - Update to Bevy 0.18
