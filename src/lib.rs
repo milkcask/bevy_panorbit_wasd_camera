@@ -302,7 +302,8 @@ pub struct PanOrbitCamera {
     /// Right key
     /// Defaults to `KeyCode::D`
     pub right_key: Option<KeyCode>,
-    /// Keyboard multiplier for panning speed
+    /// Keyboard multiplier for panning speed.
+    /// Panning speed is frame rate independent.
     /// Defaults to `50.0`
     pub keyboard_pan_multiplier: f32,
     /// Counter-clockwise key
@@ -311,7 +312,8 @@ pub struct PanOrbitCamera {
     /// Clockwise key
     /// Defaults to `KeyCode::E`
     pub clockwise_key: Option<KeyCode>,
-    /// Keyboard multiplier for rotation speed
+    /// Keyboard multiplier for rotation speed.
+    /// Rotation speed is frame rate independent.
     /// Defaults to `3.0`
     pub keyboard_yaw_multiplier: f32,
     /// Increase pitch key
@@ -320,7 +322,8 @@ pub struct PanOrbitCamera {
     /// Reduce pitch key
     /// Defaults to `KeyCode::F`
     pub reduce_pitch_key: Option<KeyCode>,
-    /// Keyboard multiplier for pitch speed
+    /// Keyboard multiplier for pitch speed.
+    /// Pitch speed is frame rate independent
     /// Defaults to `2.0`
     pub keyboard_pitch_multiplier: f32,
 }
@@ -718,7 +721,15 @@ fn pan_orbit_camera(
         } else {
             time_virt.delta_secs()
         };
-        let delta_norm = 60.0 * delta;
+
+        // The keyboard multipliers were originally tuned as per-frame steps at 60fps, so
+        // normalize against a 60Hz reference frame to keep the same feel at any frame rate.
+        const REFERENCE_FRAME_RATE: f32 = 60.0;
+        // Cap the delta used for input scaling so a single long frame (window drag, debugger
+        // pause, OS sleep) can't make the camera jump while a key is held. `Time<Real>` is
+        // unclamped, and even `Time<Virtual>`'s default 250ms clamp allows large jumps.
+        const MAX_INPUT_DELTA_SECS: f32 = 0.1;
+        let delta_norm = REFERENCE_FRAME_RATE * delta.min(MAX_INPUT_DELTA_SECS);
 
         // Only check for upside down when orbiting started or ended this frame,
         // so we don't reverse the yaw direction while the user is still dragging
