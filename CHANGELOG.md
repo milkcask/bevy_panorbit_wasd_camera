@@ -1,3 +1,9 @@
+## 0.35.1
+
+- Make keyboard movement frame rate independent, normalized so multipliers keep their 60fps feel
+  ([#2](https://github.com/milkcask/bevy_panorbit_wasd_camera/pull/2))
+- Cap keyboard input delta so long frame hitches do not cause the camera to jump
+
 ## 0.35.0
 
 - Update to Bevy 0.19
